@@ -1,0 +1,103 @@
+-- TABLES
+
+CREATE TABLE Customers (
+    CustomerID NUMBER PRIMARY KEY,
+    Name VARCHAR2(100),
+    DOB DATE,
+    Balance NUMBER
+);
+
+CREATE TABLE Accounts (
+    AccountID NUMBER PRIMARY KEY,
+    CustomerID NUMBER,
+    Balance NUMBER
+);
+
+-- SAMPLE DATA
+
+INSERT INTO Customers
+VALUES (1,'John Doe',DATE '1985-05-15',10000);
+
+INSERT INTO Accounts
+VALUES (1,1,15000);
+
+COMMIT;
+
+--------------------------------------------------
+
+-- Scenario 1 : CalculateAge
+
+CREATE OR REPLACE FUNCTION CalculateAge(
+    p_dob DATE
+)
+RETURN NUMBER
+IS
+BEGIN
+    RETURN FLOOR(MONTHS_BETWEEN(SYSDATE,p_dob)/12);
+END;
+/
+
+SELECT CalculateAge(DATE '1985-05-15') AS AGE
+FROM DUAL;
+
+--------------------------------------------------
+
+-- Scenario 2 : CalculateMonthlyInstallment
+
+CREATE OR REPLACE FUNCTION CalculateMonthlyInstallment(
+    p_loanAmount NUMBER,
+    p_interestRate NUMBER,
+    p_years NUMBER
+)
+RETURN NUMBER
+IS
+    v_months NUMBER;
+BEGIN
+    v_months := p_years * 12;
+
+    RETURN ROUND(
+        (p_loanAmount +
+        (p_loanAmount * p_interestRate * p_years / 100))
+        / v_months,
+        2
+    );
+END;
+/
+
+SELECT CalculateMonthlyInstallment(
+    500000,
+    5,
+    5
+) AS EMI
+FROM DUAL;
+
+--------------------------------------------------
+
+-- Scenario 3 : HasSufficientBalance
+
+CREATE OR REPLACE FUNCTION HasSufficientBalance(
+    p_accountId NUMBER,
+    p_amount NUMBER
+)
+RETURN VARCHAR2
+IS
+    v_balance NUMBER;
+BEGIN
+    SELECT Balance
+    INTO v_balance
+    FROM Accounts
+    WHERE AccountID = p_accountId;
+
+    IF v_balance >= p_amount THEN
+        RETURN 'TRUE';
+    ELSE
+        RETURN 'FALSE';
+    END IF;
+END;
+/
+
+SELECT HasSufficientBalance(
+    1,
+    5000
+) AS RESULT
+FROM DUAL;
