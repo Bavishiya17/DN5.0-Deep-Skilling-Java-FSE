@@ -1,6 +1,33 @@
+# Compiled Java files
 *.class
+
+# Build outputs
 target/
 build/
+out/
+
+# IDE files
 .idea/
 .vscode/
+*.iml
+*.iws
+*.ipr
 
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp tree/analysis files
+*.txt
+tree.txt
+full_tree.txt
+current_tree.txt
+
+# Node modules
+node_modules/
+
+# Maven wrapper
+.mvn/
+
+# Logs
+*.log
